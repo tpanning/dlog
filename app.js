@@ -9,7 +9,7 @@ app.use(express.responseTime());
 app.use(express.bodyParser({ keepExtensions: true }));
 
 app.get("/api/v1/records/:username/:project", records.getProject);
-app.put("/api/v1/records", records.addRecord);
+app.put("/api/v1/records/:username/:project", records.addRecord);
 app.get("*", function(req, res) {
     res.writeHead(404, { "Content-Type": "application/json" });
     res.end(JSON.stringify({ error: "unknown_resource" }) + "\n");

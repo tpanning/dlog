@@ -11,10 +11,9 @@ exports.addRecord = function(req, res) {
                 cb(new Error("Can not record empty record"));
                 return;
             }
-            if (!req.body.username || !req.body.project) {
-                cb(new Error("Records need to be identified with a username and project"));
-                return;
-            }
+            req.body.username = req.params.username;
+            req.body.project = req.params.project;
+            // If no timestamp is provided, this will use the server's current time.
             req.body.timestamp = new Date(req.body.timestamp);
             // If there was an error parsing the timestamp, just use the current time
             if (isNaN(req.body.timestamp.getTime())) {
