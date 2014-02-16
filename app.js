@@ -14,4 +14,12 @@ app.get("*", function(req, res) {
     res.end(JSON.stringify({ error: "unknown_resource" }) + "\n");
 });
 
-app.listen(8080);
+require('./data/db.js').init(function (err, results) {
+    if (err) {
+        console.error("FATAL ERROR INIT:");
+        console.error(err);
+        process.exit(-1);
+    } else {
+        app.listen(8080);
+    }
+});

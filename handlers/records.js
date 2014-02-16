@@ -1,4 +1,5 @@
-var async = require('async');
+var async = require('async'),
+    db = require('../data/db.js');
 
 exports.version = "0.0.1";
 
@@ -14,16 +15,15 @@ exports.addRecord = function(req, res) {
                 cb(new Error("Records need to be identified with a username and project"));
                 return;
             }
-            if (req.body.timestamp) {
-                console.log("Existing timestamp " + req.body.timestamp);
-                req.body.timestamp = new Date(req.body.timestamp);
-            } else {
+            req.body.timestamp = new Date(req.body.timestamp);
+            // If there was an error parsing the timestamp, just use the current time
+            if (isNaN(req.body.timestamp.getTime())) {
                 console.log("Adding timestamp");
                 req.body.timestamp = new Date();
             }
             saved_record = req.body;
             console.log("Saving record: " + JSON.stringify(saved_record));
-            cb(null);
+            db.records.insert(saved_record, { safe: true }, cb);
         }
     ],
     function(err, results) {
