@@ -36,3 +36,20 @@ exports.addRecord = function(req, res) {
         }
     })
 }
+
+exports.getProject = function(req, res) {
+    async.waterfall([
+        function(cb) {
+            db.records.find({"username": req.params.username, "project" : req.params.project}).toArray(cb);
+        }
+    ],
+    function(err, results) {
+        if (err) {
+            res.writeHead(500, {'Content-Type': 'application/json'});
+            res.end(JSON.stringify({ message: err.message }) + "\n");
+        } else {
+            res.writeHead(200, {'Content-Type': 'application/json'});
+            res.end(JSON.stringify(results) + "\n");
+        }
+    })
+}
