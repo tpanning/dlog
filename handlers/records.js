@@ -21,7 +21,6 @@ exports.addRecord = function(req, res) {
                 req.body.timestamp = new Date();
             }
             saved_record = req.body;
-            console.log("Saving record: " + JSON.stringify(saved_record));
             db.records.insert(saved_record, { safe: true }, cb);
         }
     ],
@@ -33,7 +32,7 @@ exports.addRecord = function(req, res) {
             res.writeHead(200, {'Content-Type': 'application/json'});
             res.end(JSON.stringify(saved_record) + "\n");
         }
-    })
+    });
 }
 
 exports.getProject = function(req, res) {
@@ -50,5 +49,5 @@ exports.getProject = function(req, res) {
             res.writeHead(200, {'Content-Type': 'application/json'});
             res.end(JSON.stringify(results) + "\n");
         }
-    })
+    });
 }
