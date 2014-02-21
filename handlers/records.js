@@ -17,7 +17,7 @@ exports.addRecord = function(req, res) {
             req.body.timestamp = new Date(req.body.timestamp);
             // If there was an error parsing the timestamp, just use the current time
             if (isNaN(req.body.timestamp.getTime())) {
-                console.log("Adding timestamp");
+                console.log("Invalid timestamp");
                 req.body.timestamp = new Date();
             }
             saved_record = req.body;
