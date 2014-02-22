@@ -1,5 +1,6 @@
 var async = require('async'),
-    db = require('../data/db.js');
+    db = require('../data/db.js'),
+    record_data = require('../data/record.js');
 
 exports.version = "0.0.1";
 
@@ -38,16 +39,20 @@ exports.addRecord = function(req, res) {
 exports.getProject = function(req, res) {
     async.waterfall([
         function(cb) {
-            db.records.find({"username": req.params.username, "project" : req.params.project}).toArray(cb);
-        }
+            record_data.get_records(req.params.username, req.params.project, cb);
+        },
     ],
     function(err, results) {
         if (err) {
             res.writeHead(500, {'Content-Type': 'application/json'});
             res.end(JSON.stringify({ message: err.message }) + "\n");
         } else {
+            var obj = [];
+            for (var i in results) {
+                obj[i] = results[i].response_obj();
+            }
             res.writeHead(200, {'Content-Type': 'application/json'});
-            res.end(JSON.stringify(results) + "\n");
+            res.end(JSON.stringify(obj) + "\n");
         }
     });
 }

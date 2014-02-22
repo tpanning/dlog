@@ -46,7 +46,7 @@ exports.init = function (callback) {
     ], callback);
 };
 
-
+// These values are filled in by the async above
 exports.records = null;
 exports.projects = null;
 

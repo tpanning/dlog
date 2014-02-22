@@ -1,12 +1,12 @@
 var async = require('async'),
-    db = require('../data/db.js');
+    record_data = require('../data/record.js');
 
 exports.version = "0.0.1";
 
 exports.getProject = function(req, res) {
     async.waterfall([
         function(cb) {
-            db.records.find({"username": req.params.username, "project" : req.params.project}).toArray(cb);
+            record_data.get_records(req.params.username, req.params.project, cb);
         }
     ],
         function(err, results) {
@@ -19,7 +19,7 @@ exports.getProject = function(req, res) {
                 html += '</title></head><body>';
                 html += '<ul>';
                 for (var i in results) {
-                    var record = results[i];
+                    var record = results[i].response_obj();
                     html += '<li>' + record.timestamp + ': ';
                     for (var key in record) {
                         if (key != 'timestamp') {
@@ -29,7 +29,6 @@ exports.getProject = function(req, res) {
                     html += '</li>';
                 }
                 html += '</ul>';
-                html += JSON.stringify(results);
                 html += '</body></html>';
                 res.end(html);
             }
