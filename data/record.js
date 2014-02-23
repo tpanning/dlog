@@ -7,7 +7,11 @@ exports.version = "0.0.1";
 exports.get_records = function(username, project, user_cb) {
     async.waterfall([
         function(cb) {
-            db.records.find({"username": username, "project" : project}).toArray(cb);
+            var cursor = db.records.find({"username": username, "project" : project});
+            cursor.sort('timestamp', 'asc', cb);
+        },
+        function(cursor, cb) {
+            cursor.toArray(cb);
         },
         function(results, cb) {
             var objects = [];
@@ -22,6 +26,9 @@ exports.get_records = function(username, project, user_cb) {
         });
 }
 
+exports.from_json = function(record_data) {
+    return new Record(record_data);
+}
 
 function Record(record_data) {
     for (var key in record_data) {
@@ -40,4 +47,8 @@ Record.prototype.response_obj = function() {
         }
     }
     return obj;
+}
+
+Record.prototype.project_name = function() {
+    return this.username + "/" + this.project;
 }

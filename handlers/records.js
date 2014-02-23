@@ -21,17 +21,17 @@ exports.addRecord = function(req, res) {
                 console.log("Invalid timestamp");
                 req.body.timestamp = new Date();
             }
-            saved_record = req.body;
-            db.records.insert(saved_record, { safe: true }, cb);
+            saved_record = record_data.from_json(req.body);
+            db.records.insert(saved_record.response_obj(), { safe: true }, cb);
         }
     ],
-    function(err, results) {
+        function(err, results) {
         if (err) {
             res.writeHead(500, {'Content-Type': 'application/json'});
             res.end(JSON.stringify({ message: err.message }) + "\n");
         } else {
             res.writeHead(200, {'Content-Type': 'application/json'});
-            res.end(JSON.stringify(saved_record) + "\n");
+            res.end(JSON.stringify(saved_record.response_obj()) + "\n");
         }
     });
 }
