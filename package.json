@@ -8,6 +8,7 @@
   "dependencies": {
     "express": "3.x",
     "mongodb": "1.2.x",
-    "async": "0.x"
+    "async": "0.x",
+    "nodemailer": "0.x"
   }
 }

@@ -1,8 +1,13 @@
 var async = require('async'),
     db = require('../data/db.js'),
-    record_data = require('../data/record.js');
+    record_data = require('../data/record.js'),
+    config = require('../config.js');
 
 exports.version = "0.0.1";
+
+function endsWith(str, suffix) {
+    return str.indexOf(suffix, str.length - suffix.length) !== -1;
+}
 
 exports.addRecord = function(req, res) {
     var saved_record = null;
@@ -23,15 +28,37 @@ exports.addRecord = function(req, res) {
             }
             saved_record = record_data.from_json(req.body);
             db.records.insert(saved_record.response_obj(), { safe: true }, cb);
+        }, function(results, cb) {
+            var warning = 0;
+            var text = "There was a warning in project " + saved_record.project_name() + "\n";
+            for (var key in saved_record) {
+                if (saved_record.hasOwnProperty(key)) {
+                    text += key + ": " + saved_record[key] + "\n";
+                    if (endsWith(key, "Warning") && saved_record[key] == true) {
+                        warning = 1;
+                    }
+                }
+            }
+            if (warning && config.smtpTransport !== null) {
+                var mailOptions = {
+                    from: config.email_from,
+                    to: config.email_to,
+                    subject: "Warning in " + saved_record.project_name(),
+                    text: text
+                };
+                config.smtpTransport.sendMail(mailOptions, cb);
+            } else {
+                cb(null, null);
+            }
         }
     ],
-        function(err, results) {
+    function(err, results) {
         if (err) {
             res.writeHead(500, {'Content-Type': 'application/json'});
             res.end(JSON.stringify({ message: err.message }) + "\n");
         } else {
             res.writeHead(200, {'Content-Type': 'application/json'});
-            res.end(JSON.stringify(saved_record.response_obj()) + "\n");
+            res.end(JSON.stringify(saved_record) + "\n");
         }
     });
 }
