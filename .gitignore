@@ -1,2 +1,4 @@
 /node_modules/
 /db
+# The real config file is not checked in. Only check in the config.example.js
+/config.js
