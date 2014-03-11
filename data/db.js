@@ -27,8 +27,7 @@ exports.init = function (callback) {
             db.open(cb);
         },
 
-        // 2. create collections for records and projects. if
-        //    they already exist, then we're good.
+        // 2. create collections. if they already exist, then we're good.
         function (db_conn, cb) {
             console.log("\n** 2. create records and projects collections.");
             db.collection("records", cb);
@@ -36,6 +35,11 @@ exports.init = function (callback) {
 
         function (records_coll, cb) {
             exports.records = records_coll;
+            db.collection("users", cb);
+        },
+
+        function (users_coll, cb) {
+            exports.users = users_coll;
             db.collection("projects", cb);
         },
 
@@ -49,5 +53,5 @@ exports.init = function (callback) {
 // These values are filled in by the async above
 exports.records = null;
 exports.projects = null;
-
+exports.users = null;
 

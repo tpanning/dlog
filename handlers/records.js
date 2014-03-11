@@ -67,7 +67,7 @@ exports.getProject = function(req, res) {
     async.waterfall([
         function(cb) {
             record_data.get_records(req.params.username, req.params.project, cb);
-        },
+        }
     ],
     function(err, results) {
         if (err) {
