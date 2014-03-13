@@ -64,13 +64,28 @@ exports.add_project = function(username, project_name, user_cb) {
     );
 }
 
+exports.update_profile = function(username, profile_details, user_cb) {
+    db.users.update(
+        {username: username},
+        { $set: { email: profile_details.email } },
+        { safe: true },
+        function(err, results) {
+            user_cb(err, null);
+        }
+    )
+}
+
 /**
  * @param user_data the data returned by the database
  * @constructor
  */
 function User(user_data) {
     this.username = user_data.username;
-    this.email = user_data.email;
+    if (user_data.email === undefined) {
+        this.email = "";
+    } else {
+        this.email = user_data.email;
+    }
     this.projects = [];
     for (var i in user_data.projects) {
         this.projects.push({

@@ -1,6 +1,7 @@
 var async = require('async'),
     db = require('../data/db.js'),
     record_data = require('../data/record.js'),
+    user_data = require('../data/user.js'),
     config = require('../config.js');
 
 exports.version = "0.0.1";
@@ -11,6 +12,7 @@ function endsWith(str, suffix) {
 
 exports.addRecord = function(req, res) {
     var saved_record = null;
+    var text;
     async.waterfall([
         function (cb) {
             if (!req.body) {
@@ -30,7 +32,7 @@ exports.addRecord = function(req, res) {
             db.records.insert(saved_record.response_obj(), { safe: true }, cb);
         }, function(results, cb) {
             var warning = 0;
-            var text = "There was a warning in project " + saved_record.project_name() + "\n";
+            text = "There was a warning in project " + saved_record.project_name() + "\n";
             for (var key in saved_record) {
                 if (saved_record.hasOwnProperty(key)) {
                     text += key + ": " + saved_record[key] + "\n";
@@ -39,10 +41,17 @@ exports.addRecord = function(req, res) {
                     }
                 }
             }
+
             if (warning && config.smtpTransport !== null) {
+                user_data.get_user(req.params.username, cb);
+            } else {
+                cb(null, null);
+            }
+        }, function(user, cb) {
+            if (user !== null && user.email != "") {
                 var mailOptions = {
                     from: config.email_from,
-                    to: config.email_to,
+                    to: user.email,
                     subject: "Warning in " + saved_record.project_name(),
                     text: text
                 };

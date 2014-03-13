@@ -13,6 +13,8 @@ app.get("/api/v1/records/:username/:project", records.getProject);
 app.put("/api/v1/records/:username/:project", records.addRecord);
 app.get("/:username", pages.get_user);
 app.post("/:username/add_project", pages.add_project);
+app.get("/:username/profile", pages.get_profile);
+app.post("/:username/profile", pages.update_profile);
 app.get("/:username/:project", pages.getProject);
 app.get("*", function(req, res) {
     res.writeHead(404, { "Content-Type": "application/json" });
